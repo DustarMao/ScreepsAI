@@ -1,3 +1,7 @@
+parserOptions:
+  ecmaVersion: 2017
+env:
+  node: true
 overrides:
 - files: "*.ts"
   parser: "@typescript-eslint/parser"
@@ -5,8 +9,6 @@ overrides:
   - plugin:@typescript-eslint/recommended
   plugins:
   - "@typescript-eslint"
-  env:
-    node: true
   rules:
     "@typescript-eslint/explicit-function-return-type": [0]
     "@typescript-eslint/member-delimiter-style":
