@@ -1,8 +1,8 @@
 import https from 'https'
 import fs from 'fs'
-import config from './.screeps.json'
+import config from './.screeps'
 
-const branch = process.env.BRANCH || (config as any).branch || 'main'
+const branch = process.env.BRANCH || config.branch || 'main'
 console.log('upload to branch:', branch)
 
 const main = fs.readFileSync('./dist/main.js')
