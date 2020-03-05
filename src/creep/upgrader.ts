@@ -35,20 +35,18 @@ export function createBasicUpgrader(spawn: StructureSpawn) {
   )
 }
 
-export function keepUpgraderExist() {
-  Object.values(Game.rooms).forEach(room => {
-    const upgraderList = room.find(FIND_MY_CREEPS, {
-      filter: creep => creep.memory.role === CreepRole.Upgrader,
-    })
-    if (upgraderList.length > 0) return
-    const closestSpawn = room.controller?.pos.findClosestByPath(
-      FIND_MY_SPAWNS,
-      {
-        filter: s => !s.spawning && s.isActive(),
-      }
-    )
-    if (closestSpawn != null) {
-      createBasicUpgrader(closestSpawn)
-    }
+export function keepUpgrader(room: Room) {
+  const upgraderList = room.find(FIND_MY_CREEPS, {
+    filter: creep => creep.memory.role === CreepRole.Upgrader,
   })
+  if (upgraderList.length >= 1) return
+  const closestSpawn = room.controller?.pos.findClosestByPath(
+    FIND_MY_SPAWNS,
+    {
+      filter: s => !s.spawning && s.isActive(),
+    }
+  )
+  if (closestSpawn != null) {
+    createBasicUpgrader(closestSpawn)
+  }
 }

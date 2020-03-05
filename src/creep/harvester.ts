@@ -59,21 +59,19 @@ export function createBasicHarvester(
 }
 
 const HARVESTER_PER_SOURCE = 2
-export function keepHarvester() {
-  Object.values(Game.rooms).forEach(room => {
-    const sources = room.find(FIND_SOURCES_ACTIVE)
-    const harvesters = room.find(FIND_MY_CREEPS, {
-      filter: c => c.memory.role === CreepRole.Harvester,
+export function keepHarvester(room: Room) {
+  const sources = room.find(FIND_SOURCES_ACTIVE)
+  const harvesters = room.find(FIND_MY_CREEPS, {
+    filter: c => c.memory.role === CreepRole.Harvester,
+  })
+  sources.forEach(source => {
+    const mineCreep = harvesters.filter(c => c.memory.target === source.id)
+    if (mineCreep.length >= HARVESTER_PER_SOURCE) return
+    const spawn = source.pos.findClosestByPath(FIND_MY_SPAWNS, {
+      filter: s => !s.spawning && s.isActive(),
     })
-    sources.forEach(source => {
-      const mineCreep = harvesters.filter(c => c.memory.target === source.id)
-      if (mineCreep.length >= HARVESTER_PER_SOURCE) return
-      const spawn = source.pos.findClosestByPath(FIND_MY_SPAWNS, {
-        filter: s => !s.spawning && s.isActive(),
-      })
-      if (spawn != null) {
-        createBasicHarvester(spawn, {target: source.id})
-      }
-    })
+    if (spawn != null) {
+      createBasicHarvester(spawn, {target: source.id})
+    }
   })
 }
