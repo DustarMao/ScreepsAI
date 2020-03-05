@@ -1,8 +1,11 @@
 import fetch, {Request} from 'node-fetch'
 import fs from 'fs'
-import config from './.screeps.json'
 
-const branch = process.env.BRANCH?.replace(/^release\//, '')
+const config = JSON.parse(
+  process.env.SCREEPS_CONFIG || fs.readFileSync('./.screeps.json', { encoding: 'utf-8' })
+)
+
+const branch = process.env.SCREEPS_BRANCH?.replace(/^release\//, '')
 if (branch == null || branch.length < 1) {
   console.error('must provide BRANCH')
   process.exit(1)

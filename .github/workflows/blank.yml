@@ -9,6 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      SCREEPS_CONFIG: ${{secrets.SCREEPS_CONFIG}}
+      SCREEPS_BRANCH: ${{github.ref}}
+
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
@@ -22,9 +26,6 @@ jobs:
         yarn build
 
     - name: Upload
-      env:
-        SCREEPS_CONFIG: ${{secrets.SCREEPS_CONFIG}}
-        BRANCH: ${{github.ref}}
       run: |
         echo $SCREEPS_CONFIG > .screeps.json
         yarn upload

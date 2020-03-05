@@ -10,7 +10,7 @@
     "lint": "eslint --fix src/**/*",
     "build": "rimraf dist && webpack",
     "upload": "node -r ts-node/register upload.ts",
-    "sync:sim": "npm run build && cross-env BRANCH=sim npm run upload"
+    "sync:sim": "npm run build && cross-env SCREEPS_BRANCH=sim npm run upload"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.149",
