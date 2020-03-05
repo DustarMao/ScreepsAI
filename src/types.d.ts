@@ -1,7 +1,7 @@
 declare const enum CreepRole {
   Harvester = 0,
   Builder = 1,
-  Upgrader = 2
+  Upgrader = 2,
 }
 interface CreepMemory {
   role?: CreepRole

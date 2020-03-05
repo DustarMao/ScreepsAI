@@ -1,6 +1,6 @@
-import {runHarvester} from "./harvester"
-import {runBuilder} from "./builder"
-import {runUpgrader} from "./upgrader"
+import {runHarvester} from './harvester'
+import {runBuilder} from './builder'
+import {runUpgrader} from './upgrader'
 
 export default function runAllCreeps() {
   for (const creep of Object.values(Game.creeps)) {

@@ -1,4 +1,7 @@
-export function sortBy<A, B extends number|string>(fn: (item: A) => B, array: A[]) {
+export function sortBy<A, B extends number | string>(
+  fn: (item: A) => B,
+  array: A[]
+) {
   return array.sort((a, b) => {
     const _a = fn(a)
     const _b = fn(b)
