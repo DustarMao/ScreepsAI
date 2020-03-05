@@ -7,13 +7,22 @@
   "author": "dustar.mao <mao.zili@live.cn> (https://github.com/DustarMao)",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p .",
-    "push": "tsc -p . && node index.js"
+    "build": "rimraf dist && webpack",
+    "upload": "node -r ts-node/register upload.ts",
+    "sync:sim": "npm run build && cross-env BRANCH=sim npm run upload",
+    "sync:main": "npm run build && cross-env BRANCH=main npm run upload"
   },
   "devDependencies": {
     "@types/node": "^13.7.7",
     "@types/screeps": "^3.0.0",
+    "cross-env": "^7.0.1",
+    "node-fetch": "^2.6.0",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^6.2.1",
     "ts-node": "^8.6.2",
-    "typescript": "^3.8.3"
-  }
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {}
 }
