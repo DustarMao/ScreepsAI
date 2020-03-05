@@ -1,3 +1,5 @@
+declare const _: import('lodash').LoDashStatic
+
 declare const enum CreepRole {
   Harvester = 0,
   Builder = 1,
@@ -7,9 +9,5 @@ interface CreepMemory {
   role?: CreepRole
   building?: boolean
   upgrading?: boolean
-  target?: Id<any>
-}
-
-interface SpawnMemory {
-  // TODO
+  target?: Id<unknown>
 }
