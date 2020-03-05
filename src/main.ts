@@ -4,7 +4,7 @@ import {keepUpgrader} from "./creep/upgrader"
 import {keepHarvester} from "./creep/harvester"
 
 export function loop() {
-  console.log(`current tick is ${Game.time}`)
+  console.log(`current tick is ${Game.time}!`)
 
   _.values(Game.creeps).forEach(runCreep)
   _.values(Game.rooms).forEach(room => {
