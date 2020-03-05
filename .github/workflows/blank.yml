@@ -4,16 +4,27 @@ on:
     branches:
     - master
     - release/*
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
-    - run: yarn install
-    - run: |
+
+    - name: Install Dependencies
+      run: yarn install
+
+    - name: Build
+      run: |
         yarn lint
         yarn build
-    - run: |
-        SET BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+    - name: Upload
+      env:
+        SCREEPS_CONFIG: ${{secrets.SCREEPS_CONFIG}}
+        BRANCH: ${{github.ref}}
+      run: |
+        echo $SCREEPS_CONFIG > .screeps.json
         yarn upload
