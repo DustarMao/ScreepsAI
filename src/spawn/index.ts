@@ -9,10 +9,7 @@ export function keepCreeps(room: Room) {
     const targetSource = spawn.pos.findClosestByPath(FIND_SOURCES_ACTIVE, {
       filter: filterAvailableEnergy
     })
-    if (targetSource != null)
-    spawnCreep(spawn, 'W1', {
-      target: targetSource.id,
-      work: CreepWork.Harvest
-    })
+    if (targetSource == null) break
+    spawnCreep(spawn, 'W1')
   }
 }

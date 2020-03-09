@@ -106,7 +106,7 @@ export function runCreep(creep: Creep) {
   if (storeWorkType >= 0 && store.getFreeCapacity() === 0) {
     newWorkWhenFull(creep)
   }
-  if (storeWorkType <= 0 && store.getCapacity() === 0) {
+  if (storeWorkType <= 0 && store.getUsedCapacity() === 0) {
     newWorkWhenEmpty(creep)
   }
 
