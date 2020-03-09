@@ -1,5 +1,6 @@
 import {filterAvailableEnergy} from '../resources/energy'
 import {findMaxBy} from '../utils/arrays'
+import {getObjectMem} from '../utils/memory'
 
 const workMethod: Record<CreepWork, (creep: Creep, targetObj: unknown) => number> = {
   [CreepWork.Harvest]: (creep, obj) => creep.harvest(obj as Source),
@@ -40,10 +41,10 @@ function newWorkWhenEmpty(creep: Creep) {
   } else {
     creep.memory.work = CreepWork.Harvest
     creep.memory.target = source.id
-    Memory.object[source.id].workers = [
-      ...Memory.object[source.id].workers ?? [],
-      creep.id
-    ]
+    getObjectMem(source.id, mem => ({
+      ...mem,
+      workers: [...mem.workers ?? [], creep.id]
+    }))
   }
 }
 
@@ -68,7 +69,7 @@ function getConstructionSitePriority(site: ConstructionSite) {
 }
 function newWorkWhenFull(creep: Creep) {
   const sites = creep.room.find(FIND_MY_CONSTRUCTION_SITES, {
-    filter: s => (Memory.object[s.id].workers ?? []).length < 1
+    filter: s => (getObjectMem(s.id).workers?.length ?? 0) < 1
   })
   if (sites.length > 0) {
     const target = findMaxBy(getConstructionSitePriority, sites)
@@ -80,7 +81,7 @@ function newWorkWhenFull(creep: Creep) {
   }
 
   const controller = creep.room.controller
-  if (controller != null && (Memory.object[controller.id].workers?.length ?? 0) < 1) {
+  if (controller != null && (getObjectMem(controller.id).workers?.length ?? 0) < 1) {
     creep.memory.target = controller.id
     creep.memory.work = CreepWork.Upgrade
     return

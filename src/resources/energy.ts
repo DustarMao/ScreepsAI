@@ -1,3 +1,5 @@
+import {getObjectMem} from "../utils/memory"
+
 export function getNearTerrainBlank(pos: RoomPosition) {
   const {x, y, roomName} = pos
   const room = Game.rooms[roomName]
@@ -16,13 +18,9 @@ export function getNearTerrainBlank(pos: RoomPosition) {
   return ret
 }
 
-export function getWorkers({id}: Source) {
-  return Memory.object[id].workers ?? []
-}
-
 export function filterAvailableEnergy(energy: Source) {
   if (energy.energy < 50) return false
-  if (getNearTerrainBlank(energy.pos) <= getWorkers(energy).length)
+  if (getNearTerrainBlank(energy.pos) <= (getObjectMem(energy.id).workers?.length ?? 0))
     return false
   return true
 }
