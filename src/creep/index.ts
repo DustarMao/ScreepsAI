@@ -41,6 +41,10 @@ function continueWork(
   const code = workMethod[work](creep, target)
   if (code === ERR_NOT_IN_RANGE) {
     creep.moveTo(target as {pos: RoomPosition})
+  } else if (code !== OK) {
+    creep.memory.work = CreepWork.Wait
+    creep.memory.target = undefined
+    getObjectMem(targetId, delWorkers(creep))
   }
 }
 
@@ -120,17 +124,24 @@ export function runCreep(creep: Creep) {
   const {memory, store} = creep
 
   const storeWorkType = getCreepWorkStoreType(memory.work)
-  if (storeWorkType >= 0 && store.getFreeCapacity() === 0) {
+  if (storeWorkType > 0 && store.getFreeCapacity() === 0) {
     if (memory.target) {
       getObjectMem(memory.target, delWorkers(creep))
     }
     newWorkWhenFull(creep)
   }
-  if (storeWorkType <= 0 && store.getUsedCapacity() === 0) {
+  if (storeWorkType < 0 && store.getUsedCapacity() === 0) {
     if (memory.target) {
       getObjectMem(memory.target, delWorkers(creep))
     }
     newWorkWhenEmpty(creep)
+  }
+  if (storeWorkType === 0) {
+    if (store.getUsedCapacity() > store.getFreeCapacity()) {
+      newWorkWhenFull(creep)
+    } else {
+      newWorkWhenEmpty(creep)
+    }
   }
 
   if (memory.work !== CreepWork.Wait) {

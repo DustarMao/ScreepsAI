@@ -11,6 +11,6 @@ export function keepCreeps(room: Room) {
     })
     if (targetSource == null) break
     const {creep} = spawnCreep(spawn, 'W1')
-    creep && console.log('creep %s[%s] spawned', creep.name, creep.id)
+    creep && console.log(`creep ${creep.name}${creep.id && '[' + creep.id + ']'} spawning`)
   }
 }
