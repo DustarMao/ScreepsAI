@@ -2,16 +2,25 @@ import {filterAvailableEnergy} from '../resources/energy'
 import {findMaxBy} from '../utils/arrays'
 import {getObjectMem, addWorkers, delWorkers} from '../utils/memory'
 
-const workMethod: Record<CreepWork, (creep: Creep, targetObj: unknown) => number> = {
+const workMethod: Record<
+  CreepWork,
+  (creep: Creep, targetObj: unknown) => number
+> = {
   [CreepWork.Harvest]: (creep, obj) => creep.harvest(obj as Source),
-  [CreepWork.TransferEnergy]: (creep, obj) => creep.transfer(obj as Structure, RESOURCE_ENERGY),
+  [CreepWork.TransferEnergy]: (creep, obj) =>
+    creep.transfer(obj as Structure, RESOURCE_ENERGY),
   [CreepWork.Build]: (creep, obj) => creep.build(obj as ConstructionSite),
-  [CreepWork.Upgrade]: (creep, obj) => creep.upgradeController(obj as StructureController),
+  [CreepWork.Upgrade]: (creep, obj) =>
+    creep.upgradeController(obj as StructureController),
   [CreepWork.Repair]: (creep, obj) => creep.repair(obj as Structure),
   [CreepWork.Wait]: (creep, obj) => {
-    console.error('creep %s waiting but have target %s', creep.name, (obj as {id: Id<unknown>}).id)
+    console.error(
+      'creep %s waiting but have target %s',
+      creep.name,
+      (obj as {id: Id<unknown>}).id
+    )
     return OK
-  }
+  },
 }
 function getCreepWorkStoreType(work: CreepWork = 0) {
   if (work >= 200) return -1
@@ -19,7 +28,11 @@ function getCreepWorkStoreType(work: CreepWork = 0) {
   return 0
 }
 
-function continueWork(creep: Creep, work: CreepWork = 0, targetId?: Id<unknown>) {
+function continueWork(
+  creep: Creep,
+  work: CreepWork = 0,
+  targetId?: Id<unknown>
+) {
   if (work === CreepWork.Wait) return
   if (targetId == null) return
   const target = Game.getObjectById(targetId)
@@ -33,7 +46,7 @@ function continueWork(creep: Creep, work: CreepWork = 0, targetId?: Id<unknown>)
 
 function newWorkWhenEmpty(creep: Creep) {
   const source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE, {
-    filter: filterAvailableEnergy
+    filter: filterAvailableEnergy,
   })
   if (source == null) {
     creep.say('no available energy')
@@ -66,7 +79,7 @@ function getConstructionSitePriority(site: ConstructionSite) {
 }
 function newWorkWhenFull(creep: Creep) {
   const sites = creep.room.find(FIND_MY_CONSTRUCTION_SITES, {
-    filter: s => (getObjectMem(s.id).workers?.length ?? 0) < 1
+    filter: s => (getObjectMem(s.id).workers?.length ?? 0) < 1,
   })
   if (sites.length > 0) {
     const target = findMaxBy(getConstructionSitePriority, sites)
@@ -79,7 +92,11 @@ function newWorkWhenFull(creep: Creep) {
   }
 
   const controller = creep.room.controller
-  if (controller != null && (getObjectMem(controller.id).workers?.length ?? 0) < 1) {
+  if (
+    controller != null &&
+    creep.room.find(FIND_MY_CREEPS).length > 2 &&
+    (getObjectMem(controller.id).workers?.length ?? 0) < 1
+  ) {
     creep.memory.target = controller.id
     creep.memory.work = CreepWork.Upgrade
     getObjectMem(controller.id, addWorkers(creep))
@@ -87,7 +104,7 @@ function newWorkWhenFull(creep: Creep) {
   }
 
   const spawn = creep.pos.findClosestByPath(FIND_MY_SPAWNS, {
-    filter: s => s.store.getFreeCapacity('energy') > 0
+    filter: s => s.store.getFreeCapacity('energy') > 0,
   })
   if (spawn != null) {
     creep.memory.target = spawn.id
