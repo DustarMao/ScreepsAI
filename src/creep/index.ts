@@ -45,7 +45,7 @@ function continueWork(
     creep.memory.work = CreepWork.Wait
     creep.memory.target = undefined
     getObjectMem(targetId, delWorkers(creep))
-    console.warn('creep', creep.name, 'unhandled error:', code)
+    console.log('creep', creep.name, 'unhandled error:', code)
   }
 }
 

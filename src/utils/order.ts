@@ -24,7 +24,7 @@ export function buildOrderResult(code: number, id = 'NO_ID'): OrderResult {
         return OK
       }
 
-      console.warn('unhandled bad order code %d on %s', code, id)
+      console.log('unhandled bad order code %d on %s', code, id)
       return code
     }
   }
