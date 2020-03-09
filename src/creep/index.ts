@@ -1,6 +1,6 @@
 import {filterAvailableEnergy} from '../resources/energy'
 import {findMaxBy} from '../utils/arrays'
-import {getObjectMem} from '../utils/memory'
+import {getObjectMem, addWorkers, delWorkers} from '../utils/memory'
 
 const workMethod: Record<CreepWork, (creep: Creep, targetObj: unknown) => number> = {
   [CreepWork.Harvest]: (creep, obj) => creep.harvest(obj as Source),
@@ -41,10 +41,7 @@ function newWorkWhenEmpty(creep: Creep) {
   } else {
     creep.memory.work = CreepWork.Harvest
     creep.memory.target = source.id
-    getObjectMem(source.id, mem => ({
-      ...mem,
-      workers: [...mem.workers ?? [], creep.id]
-    }))
+    getObjectMem(source.id, addWorkers(creep))
   }
 }
 
@@ -76,6 +73,7 @@ function newWorkWhenFull(creep: Creep) {
     if (target != null) {
       creep.memory.target = target.id
       creep.memory.work = CreepWork.Build
+      getObjectMem(target.id)
       return
     }
   }
@@ -84,6 +82,7 @@ function newWorkWhenFull(creep: Creep) {
   if (controller != null && (getObjectMem(controller.id).workers?.length ?? 0) < 1) {
     creep.memory.target = controller.id
     creep.memory.work = CreepWork.Upgrade
+    getObjectMem(controller.id, addWorkers(creep))
     return
   }
 
@@ -93,6 +92,7 @@ function newWorkWhenFull(creep: Creep) {
   if (spawn != null) {
     creep.memory.target = spawn.id
     creep.memory.work = CreepWork.TransferEnergy
+    getObjectMem(spawn.id, addWorkers(creep))
     return
   }
 
@@ -104,9 +104,15 @@ export function runCreep(creep: Creep) {
 
   const storeWorkType = getCreepWorkStoreType(memory.work)
   if (storeWorkType >= 0 && store.getFreeCapacity() === 0) {
+    if (memory.target) {
+      getObjectMem(memory.target, delWorkers(creep))
+    }
     newWorkWhenFull(creep)
   }
   if (storeWorkType <= 0 && store.getUsedCapacity() === 0) {
+    if (memory.target) {
+      getObjectMem(memory.target, delWorkers(creep))
+    }
     newWorkWhenEmpty(creep)
   }
 

@@ -10,3 +10,21 @@ export function getObjectMem(id: Id<unknown>, deal?: (mem: ObjectMemory) => Obje
   }
   return Memory.object[id]
 }
+
+export function addWorkers(creep: Creep) {
+  return (mem: ObjectMemory) => {
+    return {
+      ...mem, 
+      workers: [...mem.workers ?? [], creep.id]
+    }
+  }
+}
+
+export function delWorkers(creep: Creep) {
+  return (mem: ObjectMemory) => {
+    return {
+      ...mem,
+      workers: mem.workers?.filter(id => id !== creep.id)
+    }
+  }
+}
