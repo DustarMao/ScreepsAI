@@ -10,6 +10,7 @@ export function keepCreeps(room: Room) {
       filter: filterAvailableEnergy
     })
     if (targetSource == null) break
-    spawnCreep(spawn, 'W1')
+    const {creep} = spawnCreep(spawn, 'W1')
+    creep && console.log('creep %s[%s] spawned', creep.name, creep.id)
   }
 }

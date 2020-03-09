@@ -3,5 +3,7 @@ const MODELS = {
 }
 
 export function spawnCreep(spawn: StructureSpawn, model: keyof typeof MODELS, memory?: CreepMemory) {
-  return spawn.spawnCreep(MODELS[model], [model, spawn.name, Game.time].join('.'), {memory})
+  const name = [model, spawn.name, Game.time].join('.')
+  const code = spawn.spawnCreep(MODELS[model], name, {memory})
+  return {code, creep: Game.creeps[name]}
 }
