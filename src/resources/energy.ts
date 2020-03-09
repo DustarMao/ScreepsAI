@@ -22,5 +22,8 @@ export function filterAvailableEnergy(energy: Source) {
   if (energy.energy < 50) return false
   if (getNearTerrainBlank(energy.pos) <= (getObjectMem(energy.id).workers?.length ?? 0))
     return false
+  if (energy.pos.findInRange(FIND_DEPOSITS, 10).length > 0) {
+    return false
+  }
   return true
 }

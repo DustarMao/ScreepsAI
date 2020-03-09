@@ -1,6 +1,6 @@
 import {filterAvailableEnergy} from '../resources/energy'
-import {findMaxBy} from '../utils/arrays'
-import {getObjectMem, addWorkers, delWorkers} from '../utils/memory'
+import {addWorkers, delWorkers, getObjectMem} from '../utils/memory'
+import {findBuildWork, findSpawnWork, findUpgradeWork} from './works'
 
 const workMethod: Record<
   CreepWork,
@@ -45,6 +45,7 @@ function continueWork(
     creep.memory.work = CreepWork.Wait
     creep.memory.target = undefined
     getObjectMem(targetId, delWorkers(creep))
+    console.warn('creep', creep.name, 'unhandled error:', code)
   }
 }
 
@@ -62,59 +63,21 @@ function newWorkWhenEmpty(creep: Creep) {
   }
 }
 
-function getConstructionSitePriority(site: ConstructionSite) {
-  switch (site.structureType) {
-    case STRUCTURE_TOWER:
-      return 1000
-    case STRUCTURE_RAMPART:
-    case STRUCTURE_WALL:
-      return 500
-    case STRUCTURE_SPAWN:
-      return 100
-    case STRUCTURE_EXTENSION:
-      return 99
-    case STRUCTURE_STORAGE:
-      return 50
-    case STRUCTURE_ROAD:
-      return 1
-    default:
-      return 0
-  }
-}
 function newWorkWhenFull(creep: Creep) {
-  const sites = creep.room.find(FIND_MY_CONSTRUCTION_SITES, {
-    filter: s => (getObjectMem(s.id).workers?.length ?? 0) < 1,
-  })
-  if (sites.length > 0) {
-    const target = findMaxBy(getConstructionSitePriority, sites)
-    if (target != null) {
-      creep.memory.target = target.id
-      creep.memory.work = CreepWork.Build
-      getObjectMem(target.id)
-      return
-    }
+  const workList: ((creep: Creep) => boolean | void)[] = []
+  switch (creep.memory.job) {
+    case CreepJob.Upgrader:
+      workList.push(findUpgradeWork, findBuildWork, findSpawnWork)
+      break
+    case CreepJob.SpawnWorker:
+      workList.push(findSpawnWork, findBuildWork, findUpgradeWork)
+      break
+    default:
+      workList.push(findBuildWork, findSpawnWork, findUpgradeWork)
   }
 
-  const controller = creep.room.controller
-  if (
-    controller != null &&
-    creep.room.find(FIND_MY_CREEPS).length > 2 &&
-    (getObjectMem(controller.id).workers?.length ?? 0) < 1
-  ) {
-    creep.memory.target = controller.id
-    creep.memory.work = CreepWork.Upgrade
-    getObjectMem(controller.id, addWorkers(creep))
-    return
-  }
-
-  const spawn = creep.pos.findClosestByPath(FIND_MY_SPAWNS, {
-    filter: s => s.store.getFreeCapacity('energy') > 0,
-  })
-  if (spawn != null) {
-    creep.memory.target = spawn.id
-    creep.memory.work = CreepWork.TransferEnergy
-    getObjectMem(spawn.id, addWorkers(creep))
-    return
+  for (const findWork of workList) {
+    if (findWork(creep)) break
   }
 
   creep.memory.work = CreepWork.Wait

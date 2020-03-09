@@ -9,9 +9,17 @@ declare const enum CreepWork {
   Repair = 204
 }
 
+declare const enum CreepJob {
+  None = 0,
+  Upgrader = 1,
+  SpawnWorker = 2
+}
+
 interface CreepMemory {
+  lastErr?: number
   target?: Id<unknown>
   work?: CreepWork
+  job?: CreepJob
 }
 
 interface ObjectMemory {

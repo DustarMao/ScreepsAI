@@ -10,7 +10,17 @@ export function keepCreeps(room: Room) {
       filter: filterAvailableEnergy
     })
     if (targetSource == null) break
-    const {creep} = spawnCreep(spawn, 'W1')
-    creep && console.log(`creep ${creep.name}${creep.id && '[' + creep.id + ']'} spawning`)
+    const [spawnWorkers, upgradeWorkers] = [CreepJob.SpawnWorker, CreepJob.Upgrader].map(job => {
+      return room.find(FIND_MY_CREEPS, {
+        filter: c => c.memory.job === job
+      }).length
+    })
+    const job = spawnWorkers < spawns.length * 2
+      ? CreepJob.SpawnWorker
+      : upgradeWorkers < 1
+        ? CreepJob.Upgrader
+        : undefined
+    const {creep} = spawnCreep(spawn, 'W1', {job})
+    creep && console.log(`creep ${creep.name} spawning`, creep.id)
   }
 }
