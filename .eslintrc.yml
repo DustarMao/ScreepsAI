@@ -2,6 +2,10 @@ parserOptions:
   ecmaVersion: 2017
 env:
   node: true
+extends:
+  - eslint:recommended
+rules:
+  no-undef: 0
 overrides:
 - files: "*.ts"
   parser: "@typescript-eslint/parser"
@@ -10,7 +14,10 @@ overrides:
   plugins:
   - "@typescript-eslint"
   rules:
-    "@typescript-eslint/explicit-function-return-type": [0]
+    "@typescript-eslint/explicit-function-return-type": 0
+    "@typescript-eslint/no-explicit-any":
+    - 1
+    - ignoreRestArgs: true
     "@typescript-eslint/member-delimiter-style":
     - 2
     - multiline:
